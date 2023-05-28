@@ -8,9 +8,13 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "module": "zinc_constant_data",
+            "module": "zinc",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
+            "args": [
+                "--work_type=test",
+                "--loader_type=gnm"
+            ]
         }
     ]
 }

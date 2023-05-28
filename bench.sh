@@ -1,4 +1,6 @@
-python3 -m zinc_single --loader_workers=4 
-python3 -m zinc_single --loader_workers=4 --aot
-python3 -m zinc_single --loader_workers=0
-python3 -m zinc_single --loader_workers=0 --aot
+#python3 -m zinc --loader_type=constant --work_type=train --batch_size=512
+#python3 -m zinc --loader_type=constant --work_type=train --batch_size=512 --aot
+
+python3 -m zinc --work_type=train --batch_size=512 --loader_type=gnm 
+python3 -m zinc --work_type=train --batch_size=512 --loader_type=gnm --aot
+python3 -m zinc --work_type=train --batch_size=512 --loader_type=normal

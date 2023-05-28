@@ -1,0 +1,89 @@
+scat8212@htc-g040 /d/c/s/Z/AoTGNN> python3 -m zinc --work_type=train --batch_size=512 --loader_type=normal
+
+------------------------------
+Namespace(aot=False, prefetch=False, loader_type='normal', work_type='train', batch_size=512, warm_repeats=10, bench_repeats=20)
+------------------------------
+STAGE:2023-05-28 17:49:52 3331313:3331313 ActivityProfilerController.cpp:311] Completed Stage: Warm Up
+STAGE:2023-05-28 17:49:54 3331313:3331313 ActivityProfilerController.cpp:317] Completed Stage: Collection
+STAGE:2023-05-28 17:49:54 3331313:3331313 ActivityProfilerController.cpp:321] Completed Stage: Post Processing
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------
+enumerate(DataLoader)#_SingleProcessDataLoaderIter._...        44.10%     476.494ms        71.89%     776.732ms      36.987ms            21
+                                              aten::cat        10.47%     113.112ms        18.91%     204.293ms       2.043ms           100
+                                           aten::narrow         4.20%      45.423ms         8.41%      90.849ms       2.271us         40000
+                                            aten::slice         4.30%      46.455ms         4.34%      46.853ms       1.164us         40260
+                                       cudaLaunchKernel         4.01%      43.307ms         4.01%      43.307ms       4.899us          8840
+                               Optimizer.step#Adam.step         1.58%      17.126ms         3.94%      42.612ms       2.131ms            20
+                                              aten::add         3.29%      35.550ms         3.54%      38.242ms       3.621us         10560
+                                             aten::full         2.97%      32.045ms         3.00%      32.446ms       3.245us         10000
+      autograd::engine::evaluate_function: StdBackward0         0.22%       2.394ms         2.89%      31.243ms     173.572us           180
+                                           aten::unbind         1.50%      16.210ms         2.66%      28.730ms       1.437ms            20
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------
+Self CPU time total: 1.081s
+
+STAGE:2023-05-28 17:50:15 3331313:3331313 ActivityProfilerController.cpp:311] Completed Stage: Warm Up
+STAGE:2023-05-28 17:50:16 3331313:3331313 ActivityProfilerController.cpp:317] Completed Stage: Collection
+STAGE:2023-05-28 17:50:16 3331313:3331313 ActivityProfilerController.cpp:321] Completed Stage: Post Processing
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                  volta_sgemm_128x32_tn         0.00%       0.000us         0.00%       0.000us       0.000us      19.867ms        11.37%      19.867ms      99.335us           200
+void at::native::reduce_kernel<128, 4, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us      13.771ms         7.88%      13.771ms      24.591us           560
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      13.358ms         7.65%      13.358ms      23.854us           560
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      13.253ms         7.59%      13.253ms      17.909us           740
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      12.724ms         7.28%      12.724ms      17.672us           720
+                         volta_sgemm_64x32_sliced1x4_nt         0.00%       0.000us         0.00%       0.000us       0.000us       9.315ms         5.33%       9.315ms      46.575us           200
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       9.078ms         5.20%       9.078ms      16.211us           560
+                                  volta_sgemm_128x32_nn         0.00%       0.000us         0.00%       0.000us       0.000us       8.512ms         4.87%       8.512ms      42.560us           200
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       8.438ms         4.83%       8.438ms      22.205us           380
+void at::native::(anonymous namespace)::indexSelectL...         0.00%       0.000us         0.00%       0.000us       0.000us       6.066ms         3.47%       6.066ms      50.550us           120
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+Self CPU time total: 74.413ms
+Self CUDA time total: 174.692ms
+
+scat8212@htc-g040 /d/c/s/Z/AoTGNN> python3 -m zinc --work_type=train --batch_size=512 --loader_type=normal
+                                   ^C
+scat8212@htc-g040 /d/c/s/Z/AoTGNN> python3 -m zinc --work_type=train --batch_size=512 --loader_type=gnm
+
+------------------------------
+Namespace(aot=False, prefetch=False, loader_type='gnm', work_type='train', batch_size=512, warm_repeats=10, bench_repeats=20)
+------------------------------
+STAGE:2023-05-28 17:52:09 3332268:3332268 ActivityProfilerController.cpp:311] Completed Stage: Warm Up
+STAGE:2023-05-28 17:52:12 3332268:3332268 ActivityProfilerController.cpp:317] Completed Stage: Collection
+STAGE:2023-05-28 17:52:12 3332268:3332268 ActivityProfilerController.cpp:321] Completed Stage: Post Processing
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------
+enumerate(DataLoader)#_SingleProcessDataLoaderIter._...        46.02%     774.490ms        82.26%        1.384s      65.922ms            21
+                                           aten::unbind        11.12%     187.142ms        19.13%     322.014ms       8.050ms            40
+                                              aten::cat         6.64%     111.665ms        12.21%     205.529ms       2.055ms           100
+                                           aten::select         7.67%     129.140ms         8.19%     137.859ms       1.207us        114227
+                                           aten::narrow         2.78%      46.786ms         5.56%      93.617ms       2.281us         41040
+                                            aten::slice         2.86%      48.130ms         2.88%      48.387ms       1.171us         41320
+                               Optimizer.step#Adam.step         0.99%      16.667ms         2.51%      42.225ms       2.111ms            20
+                                       cudaLaunchKernel         2.50%      42.107ms         2.50%      42.107ms       4.763us          8840
+                                             aten::full         1.99%      33.508ms         2.03%      34.094ms       3.241us         10520
+                                              aten::add         1.82%      30.612ms         1.97%      33.188ms       3.067us         10820
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------
+Self CPU time total: 1.683s
+
+STAGE:2023-05-28 17:52:52 3332268:3332268 ActivityProfilerController.cpp:311] Completed Stage: Warm Up
+STAGE:2023-05-28 17:52:54 3332268:3332268 ActivityProfilerController.cpp:317] Completed Stage: Collection
+STAGE:2023-05-28 17:52:54 3332268:3332268 ActivityProfilerController.cpp:321] Completed Stage: Post Processing
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                  volta_sgemm_128x32_tn         0.00%       0.000us         0.00%       0.000us       0.000us      20.255ms        11.26%      20.255ms     101.275us           200
+void at::native::reduce_kernel<128, 4, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us      13.898ms         7.73%      13.898ms      24.818us           560
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      13.789ms         7.67%      13.789ms      24.623us           560
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      13.622ms         7.58%      13.622ms      18.408us           740
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      13.057ms         7.26%      13.057ms      18.135us           720
+                         volta_sgemm_64x32_sliced1x4_nt         0.00%       0.000us         0.00%       0.000us       0.000us       9.590ms         5.33%       9.590ms      47.950us           200
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       9.304ms         5.17%       9.304ms      16.614us           560
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       8.728ms         4.85%       8.728ms      22.968us           380
+                                  volta_sgemm_128x32_nn         0.00%       0.000us         0.00%       0.000us       0.000us       8.691ms         4.83%       8.691ms      43.455us           200
+void at::native::indexFuncLargeIndex<float, long, un...         0.00%       0.000us         0.00%       0.000us       0.000us       6.497ms         3.61%       6.497ms      64.970us           100
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+Self CPU time total: 73.865ms
+Self CUDA time total: 179.822ms
