@@ -34,8 +34,8 @@ class GnmSampler(torch.utils.data.sampler.Sampler):
                 cur_num_edges += data.num_edges
 
                 if cur_num_graphs + 1 > self.max_num_graphs \
-                    or cur_num_nodes + (self.max_num_graphs - cur_num_graphs) > self.max_num_nodes \
-                    or cur_num_edges + (self.max_num_graphs - cur_num_graphs) > self.max_num_edges:
+                    or cur_num_nodes > self.max_num_nodes \
+                    or cur_num_edges > self.max_num_edges:
                     break
 
                 # Add sample to current batch
@@ -93,16 +93,16 @@ class GnmCollater:
         num_graphs = len(batch)
         num_nodes = sum([data.num_nodes for data in batch])
         num_edges = sum([data.num_edges for data in batch])
-
-        extra_data = []
-        for _ in range(num_graphs, self.max_num_graphs-1):
-            extra_data.append(self.fake_graph(1, 1, data0))
-            num_nodes += 1
-            num_edges += 1
-        
+        if self.max_num_graphs - num_graphs - 1 > 0:
+            extra_data = [self.fake_graph(0, 0, data0)] * (self.max_num_graphs - num_graphs - 1)
+        else:
+            extra_data = []
         extra_data.append(self.fake_graph(self.max_num_nodes - num_nodes, self.max_num_edges - num_edges, data0))
 
         return Batch.from_data_list(batch + extra_data)
+
+def pad_num(x: int, d: int):
+    return int(x//d+1)*d;
 
 class GnmLoader(torch.utils.data.DataLoader):
     def __init__(
@@ -112,16 +112,14 @@ class GnmLoader(torch.utils.data.DataLoader):
         shuffle: bool = False,
         **kwargs,
     ):
-        #avg_num_nodes = 24
-        #avg_num_edges = 50
         avg_num_nodes = sum([data.num_nodes for data in dataset]) / len(dataset)
         avg_num_edges = sum([data.num_edges for data in dataset]) / len(dataset)
-        max_num_nodes = int(avg_num_nodes * batch_size)
-        max_num_edges = int(avg_num_edges * batch_size)
+        max_num_nodes = pad_num(int(avg_num_nodes * (batch_size-1)),16)
+        max_num_edges = pad_num(int(avg_num_edges * (batch_size-1)),16)
         super().__init__(
             dataset,
-            batch_sampler=GnmSampler(dataset, batch_size+1, max_num_nodes, max_num_edges, shuffle),
-            collate_fn=GnmCollater(batch_size+1, max_num_nodes, max_num_edges),
+            batch_sampler=GnmSampler(dataset, batch_size-1, max_num_nodes-1, max_num_edges, shuffle),
+            collate_fn=GnmCollater(batch_size, max_num_nodes, max_num_edges),
             **kwargs,
         )
 

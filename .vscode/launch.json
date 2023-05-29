@@ -13,7 +13,8 @@
             "justMyCode": true,
             "args": [
                 "--work_type=test",
-                "--loader_type=gnm"
+                "--loader_type=gnm",
+                "--aot"
             ]
         }
     ]

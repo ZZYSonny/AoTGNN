@@ -1,4 +1,5 @@
 .dataset
 .script
 .git
+.log
 __pycache__
