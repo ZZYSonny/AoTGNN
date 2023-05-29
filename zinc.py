@@ -11,9 +11,8 @@ import torch_geometric as tg
 import torch_geometric.nn as tgnn
 import torch_geometric.loader as tgloader
 import torch_geometric.datasets as tgsets
+import torch_geometric.profile as tgprof
 import aottools
-import time
-import torch.profiler as profiler
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--aot", action="store_true")
@@ -86,27 +85,25 @@ else:
 if args.prefetch:
     loader = aottools.PrefetchLoader(loader, device)
 
-
-for _ in tqdm(range(args.warm_repeats)): 
+print("Warmup")
+for _ in range(args.warm_repeats): 
     work()
 
-time0 = time.time()
-for _ in range(args.bench_repeats): 
-    list(loader)
-time1 = time.time()
-print(f"Loader Time: {(time1-time0)/args.bench_repeats:.3f}")
+print("Loader ", end="", flush=True)
+with tgprof.timeit(True, args.bench_repeats):
+    for _ in range(args.bench_repeats): 
+        for data in loader:
+            pass
 
+print("Model  ", end="", flush=True)
 datalist = list(loader)
-time0 = time.time()
-for _ in range(args.bench_repeats): 
-    for data in datalist:
-        model(data.to(device))
-time1 = time.time()
-print(f"Model  Time: {(time1-time0)/args.bench_repeats:.3f}")
+with tgprof.timeit(True, args.bench_repeats):
+    for _ in range(args.bench_repeats): 
+        for data in datalist:
+            model(data.to(device))
 
-time0 = time.time()
-for _ in range(args.bench_repeats): 
-    for data in loader:
-        model(data.to(device))
-time1 = time.time()
-print(f"Total  Time: {(time1-time0)/args.bench_repeats:.3f}")
+print("Total  ", end="", flush=True)
+with tgprof.timeit(True, args.bench_repeats):
+    for _ in range(args.bench_repeats): 
+        for data in loader:
+            model(data.to(device))
