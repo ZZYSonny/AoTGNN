@@ -87,24 +87,26 @@ if args.prefetch:
     loader = aottools.PrefetchLoader(loader, device)
 
 
-#for _ in range(10):
-#    for batch in loader:
-#        pass
-#        print(batch.x.shape, batch.y.shape, batch.edge_index.shape, batch.batch.shape, batch.batch.max())
+for _ in tqdm(range(args.warm_repeats)): 
+    work()
 
-for name, repeats in [("Warm", args.warm_repeats), ("Bench", args.bench_repeats)]:
-    time0 = time.time()
-    for _ in range(repeats): work()
-    time1 = time.time()
-    time_per_epoch = (time1-time0)/repeats
-    print(f"{name} time: {time_per_epoch:.3f}")
+time0 = time.time()
+for _ in range(args.bench_repeats): 
+    list(loader)
+time1 = time.time()
+print(f"Loader Time: {(time1-time0)/args.bench_repeats:.3f}")
 
-#for _ in range(args.warm_repeats): work()
+datalist = list(loader)
+time0 = time.time()
+for _ in range(args.bench_repeats): 
+    for data in datalist:
+        model(data.to(device))
+time1 = time.time()
+print(f"Model  Time: {(time1-time0)/args.bench_repeats:.3f}")
 
-#with profiler.profile(activities=[profiler.ProfilerActivity.CPU], record_shapes=True) as prof:
-#    work()
-#print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
-
-#with profiler.profile(activities=[profiler.ProfilerActivity.CUDA], record_shapes=True) as prof:
-#    work()
-#print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=10))
+time0 = time.time()
+for _ in range(args.bench_repeats): 
+    for data in loader:
+        model(data.to(device))
+time1 = time.time()
+print(f"Total  Time: {(time1-time0)/args.bench_repeats:.3f}")
