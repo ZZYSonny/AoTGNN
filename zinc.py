@@ -30,7 +30,7 @@ print(args)
 print("------------------------------")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-dataset = tgsets.ZINC(".dataset", True, split="train")
+dataset = tgsets.ZINC(".dataset/ZINC", True, split="train")
 
 class ModelGraph(nn.Module):
     def __init__(self, dim: int, num_layer: int):
