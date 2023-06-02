@@ -95,6 +95,12 @@ with tgprof.timeit(True, args.bench_repeats):
         for data in loader:
             pass
 
+print("Total  ", end="", flush=True)
+with tgprof.timeit(True, args.bench_repeats):
+    for _ in range(args.bench_repeats): 
+        for data in loader:
+            model(data.to(device))
+
 print("Model  ", end="", flush=True)
 datalist = list(loader)
 with tgprof.timeit(True, args.bench_repeats):
@@ -102,8 +108,10 @@ with tgprof.timeit(True, args.bench_repeats):
         for data in datalist:
             model(data.to(device))
 
-print("Total  ", end="", flush=True)
+print("Model(PreCopy) ", end="", flush=True)
+datalist = list(loader)
+datalist_gpu = [data.to(device) for data in datalist]
 with tgprof.timeit(True, args.bench_repeats):
     for _ in range(args.bench_repeats): 
-        for data in loader:
-            model(data.to(device))
+        for data in datalist_gpu:
+            model(data)
